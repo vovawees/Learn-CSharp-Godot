@@ -1,0 +1,24 @@
+VPS HOST: 130.61.29.17 (Private IP: 10.0.0.81, Hostname: vovawe-vps)
+OS: Oracle Linux 9.8 (aarch64 / ARM64), 4 OCPU, 24 GB RAM
+USER: opc
+ISOLATED PROJECT WORKSPACE: /home/opc/ai_workspace/csharp_mastery_hub/
+
+INSTALLED RUNTIMES ON VPS:
+- .NET SDK: 10.0.114 (dotnet-sdk-10.0.aarch64) + 9.0.123
+- Reusable C# 14 Runner Project: /home/opc/ai_workspace/csharp_mastery_hub/runner/Runner.csproj
+- Persistent State Store: /home/opc/ai_workspace/csharp_mastery_hub/state/progress.json
+- Microservice Script: /home/opc/ai_workspace/csharp_mastery_hub/server.mjs
+
+SYSTEMD SERVICE:
+- Name: csharp_mastery_hub_api.service
+- Port: 8945/tcp
+- Status: enabled and active (running)
+- Endpoints on 127.0.0.1:8945 / 0.0.0.0:8945:
+  * GET /health -> returns service status, host info, and active dotnet --version (10.0.114)
+  * GET /state -> returns merged cross-device learning state, XP, completed contracts, passed PR quizzes, and code snapshots
+  * POST /state -> merges and persists progress updates from PC and Mobile clients
+
+WEB APP TO VPS BRIDGE:
+- /server.ts connects to 130.61.29.17:22 via ssh2 using ~/.ssh/oci_a1 (stored strictly outside git repository).
+- Executes real .NET 10.0.114 compilations in /home/opc/ai_workspace/csharp_mastery_hub/runner via POST /api/vps/dotnet-run.
+- Syncs GitHub Issues and Milestones with https://api.github.com/repos/vovawees/Learn-CSharp-Godot using ~/.config/gh_token (stored strictly outside git repository).

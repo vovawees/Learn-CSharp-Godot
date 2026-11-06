@@ -1,0 +1,6 @@
+{
+  "name": "C# & Godot 4.4 Engineering Lab",
+  "description": "Инженерная платформа глубокого изучения C# (.NET 9 / C# 13) и разработки игр на Godot 4.4: ТЗ, симуляция памяти CLR, анти-копипаст проверка контрактов и синхронизация прогресса через Git и VPS.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

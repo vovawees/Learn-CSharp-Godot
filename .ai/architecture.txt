@@ -1,0 +1,26 @@
+PROJECT: C# 14 (.NET 10) & Godot 4.7 Stable / 4.8 Beta 2 Engineering Lab
+REPO: https://github.com/vovawees/Learn-CSharp-Godot
+STACK:
+- Frontend: React 19, TypeScript, Tailwind CSS v4 (@custom-variant dark), Vite
+- Backend Proxy & Runner Bridge: Express (server.ts on port 3000), ssh2, @google/genai (gemini-3.8-flash)
+- Remote Compiler & State Sync Daemon: Node.js + .NET SDK 10.0.114 on Oracle Linux 9.8 ARM64 VPS
+
+CORE MODULES:
+1. /src/data/curriculum.ts
+   - Progressive engineering tasks covering:
+     * Task 01 (cs-val-ref-01): CLR Stack vs Managed Heap, readonly struct vs class, Physical Promotion in .NET 10, zero-allocation kinetic damping calculation.
+     * Task 02 (cs-span-slice-02): C# 14 Span<T> / ReadOnlySpan<T>, params ReadOnlySpan<T>, single-pass O(N) telemetry filtering without LINQ .ToArray() heap allocations.
+     * Task 03 (godot-physics-delta-03): Godot 4.7 Stable / 4.8 Beta 2 CharacterBody2D._PhysicsProcess(double delta), Roslyn Source Generator partial class requirement, struct Vector2 property modification, MoveAndSlide() without arguments, avoiding GetNode in physics loop.
+     * Task 04 (godot-signals-decouple-04): Godot 4.7/4.8 typed signals ([Signal] public delegate void ...EventHandler), C# 14 field keyword context, component decoupling, state invariant clamping [0, MaxHp].
+   - Engineering PR Code Reviews (ENGINEERING_QUIZZES):
+     * PR #14: O(N) vs O(N log N) OrderBy + DistanceSquaredTo optimization.
+     * PR #27: Autoload event subscription memory leak & ObjectDisposedException on QueueFree() without _ExitTree() unsubscription.
+     * PR #41: C# 14 field keyword in property accessors and zero-allocation params ReadOnlySpan<T>.
+
+2. /src/engine/csharpEvaluator.ts
+   - Decoupled pure logic module tested via node:test (/src/engine/csharpEvaluator.test.ts).
+   - Implements Two-Stage Goal-Driven Evaluation:
+     * Stage 1 (goalPassed): Verifies behavioral invariants and edge cases regardless of user variable names or syntax style (if/else, ternary, Math.Clamp, record struct, etc.).
+     * Stage 2 (optimizationPassed): Audits CLR Gen 0 Heap allocations, algorithmic complexity, and Godot frame anti-patterns.
+   - Blocks direct copy-paste of anti-pattern traps while encouraging independent code synthesis.
+   - Implements simulateClrAndGodotFrame() for the interactive CLR & Godot 4.8 visual sandbox.
