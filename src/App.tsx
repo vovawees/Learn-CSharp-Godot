@@ -10,9 +10,9 @@ export default function App() {
   const [syncData, setSyncData] = useState<SyncStatusData | null>(null);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
 
-  const [xp, setXp] = useState<number>(350);
-  const [completedTasks, setCompletedTasks] = useState<string[]>(['cs-val-ref-01']);
-  const [passedQuizzes, setPassedQuizzes] = useState<string[]>(['quiz-clr-stack']);
+  const [xp, setXp] = useState<number>(0);
+  const [completedTasks, setCompletedTasks] = useState<string[]>([]);
+  const [passedQuizzes, setPassedQuizzes] = useState<string[]>([]);
   const [codeSnapshots, setCodeSnapshots] = useState<Record<string, string>>({});
 
   useEffect(() => {

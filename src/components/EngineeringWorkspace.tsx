@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { CURRICULUM_TASKS, EngineeringTask } from '../data/curriculum';
-import { evaluateCSharpTask, EvaluationReport } from '../engine/csharpEvaluator';
 
 interface EngineeringWorkspaceProps {
   completedTasks: string[];
@@ -28,8 +27,7 @@ const MOBILE_QUICK_TOKENS = [
 
 export const EngineeringWorkspace: React.FC<EngineeringWorkspaceProps> = ({
   completedTasks,
-  codeSnapshots,
-  onTaskPassed
+  codeSnapshots
 }) => {
   const [selectedTaskId, setSelectedTaskId] = useState<string>(CURRICULUM_TASKS[0].id);
   const currentTask: EngineeringTask =
@@ -44,7 +42,7 @@ export const EngineeringWorkspace: React.FC<EngineeringWorkspaceProps> = ({
     return initial;
   });
 
-  const [report, setReport] = useState<EvaluationReport | null>(null);
+  const [checkNotice, setCheckNotice] = useState(false);
   const [vpsRunOutput, setVpsRunOutput] = useState<string | null>(null);
   const [isRunningVps, setIsRunningVps] = useState<boolean>(false);
   const [mentorReview, setMentorReview] = useState<string | null>(null);
@@ -60,7 +58,7 @@ export const EngineeringWorkspace: React.FC<EngineeringWorkspaceProps> = ({
   const handleSelectTask = (taskId: string) => {
     setSelectedTaskId(taskId);
     setSlideIndex(0);
-    setReport(null);
+    setCheckNotice(false);
     setVpsRunOutput(null);
     setMentorReview(null);
     setSelectedDefenseOption(null);
@@ -79,13 +77,11 @@ export const EngineeringWorkspace: React.FC<EngineeringWorkspaceProps> = ({
     }));
   };
 
+  // The previous checker only matched text and could report invented outputs.
+  // Do not mark tasks complete until real behavioral tests are integrated (#6).
   const handleRunContracts = () => {
-    const evalReport = evaluateCSharpTask(currentTask.id, activeCode, false);
-    setReport(evalReport);
+    setCheckNotice(true);
     setMobilePane('contracts');
-    if (evalReport.goalPassed) {
-      onTaskPassed(currentTask.id, activeCode, currentTask.xpReward);
-    }
   };
 
   const handleTryAlternativeValidCode = () => {
@@ -94,11 +90,7 @@ export const EngineeringWorkspace: React.FC<EngineeringWorkspaceProps> = ({
       ? currentTask.alternativeValidSolution
       : currentTask.referenceCleanSolution;
     setCodeByTask((prev) => ({ ...prev, [currentTask.id]: nextCode }));
-    const evalReport = evaluateCSharpTask(currentTask.id, nextCode, false);
-    setReport(evalReport);
-    if (evalReport.goalPassed) {
-      onTaskPassed(currentTask.id, nextCode, currentTask.xpReward);
-    }
+    setCheckNotice(false);
   };
 
   const handleRunOnVpsDotnet10 = async () => {
@@ -123,14 +115,13 @@ export const EngineeringWorkspace: React.FC<EngineeringWorkspaceProps> = ({
   const handleRequestSocraticReview = async () => {
     setIsLoadingMentor(true);
     try {
-      const currentEval = report || evaluateCSharpTask(currentTask.id, activeCode, false);
       const res = await fetch('/api/mentor/review', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           taskTitle: currentTask.title,
           code: activeCode,
-          evaluationSummary: currentEval.architecturalFeedback
+          evaluationSummary: 'Автоматическая проверка поведения пока недоступна; выполнение решения не подтверждено.'
         })
       });
       const data = await res.json();
@@ -224,7 +215,7 @@ export const EngineeringWorkspace: React.FC<EngineeringWorkspaceProps> = ({
               : 'text-slate-600 dark:text-slate-400'
           }`}
         >
-          3. Контракты ({report ? (report.goalPassed ? '✓' : '!') : '4'})
+          3. Проверка
         </button>
       </div>
 
@@ -404,7 +395,7 @@ export const EngineeringWorkspace: React.FC<EngineeringWorkspaceProps> = ({
                   Среда разработки C# 14 (.NET 10 / Godot 4.8)
                 </h2>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Свободная реализация: система проверяет контракт результата и памяти, а не порядок строк.
+                  Свободная реализация: проверяй результат на разных входах; автоматический зачёт пока отключён.
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -497,79 +488,17 @@ export const EngineeringWorkspace: React.FC<EngineeringWorkspaceProps> = ({
 
           {/* Contract & Optimization Evaluation Results */}
           <div className="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white font-display">
-                Результаты проверки контрактов и памяти CLR
-              </h3>
-              {report && (
-                <div className="flex items-center gap-2 text-xs font-mono tabular-nums">
-                  <span
-                    className={
-                      report.goalPassed
-                        ? 'text-emerald-600 dark:text-emerald-400 font-semibold'
-                        : 'text-amber-600 dark:text-amber-400'
-                    }
-                  >
-                    {report.goalPassed ? '✓ Цель выполнена' : '○ Цель в работе'}
-                  </span>
-                  <span aria-hidden="true">·</span>
-                  <span
-                    className={
-                      report.optimizationPassed
-                        ? 'text-sky-600 dark:text-sky-400 font-semibold'
-                        : 'text-slate-500'
-                    }
-                  >
-                    {report.optimizationPassed ? '★ Zero-GC Оптимизировано' : 'Аудит памяти'}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {!report ? (
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Нажми «Проверить цель и контракты», чтобы прогнать модульные тесты ТЗ и проверить аллокации памяти .NET 10.
-              </p>
-            ) : (
-              <div className="space-y-4">
-                <div
-                  className={`p-3.5 rounded-lg border text-xs leading-relaxed ${
-                    report.allContractsPassed
-                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-800 dark:text-emerald-200'
-                      : report.goalPassed
-                        ? 'bg-sky-500/10 border-sky-500/30 text-sky-800 dark:text-sky-200'
-                        : 'bg-amber-500/10 border-amber-500/30 text-amber-800 dark:text-amber-200'
-                  }`}
-                >
-                  <div className="font-semibold mb-1">{report.architecturalFeedback}</div>
-                  <div className="font-mono text-[11px] opacity-90">
-                    Сложность: {report.complexityEstimate} · Куча (Heap): {report.heapAllocationBytes} B · Стек (Stack):{' '}
-                    {report.stackAllocationBytes} B
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  {report.contractResults.map((c) => (
-                    <div
-                      key={c.contractId}
-                      className="p-3 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 text-xs"
-                    >
-                      <div className="flex items-center justify-between gap-2 font-medium">
-                        <span className="text-slate-900 dark:text-white">
-                          {c.passed ? '✓ ' : '✕ '}
-                          {c.name}
-                        </span>
-                        <span className="font-mono text-slate-500">{c.category}</span>
-                      </div>
-                      <div className="mt-1 font-mono text-[11px] text-sky-600 dark:text-sky-400">
-                        Вывод: {c.actualOutput}
-                      </div>
-                      <div className="mt-1 text-slate-600 dark:text-slate-400">{c.diagnostic}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            <h3 className="text-base font-bold text-slate-900 dark:text-white font-display">
+              Проверка решения временно недоступна
+            </h3>
+            <p role="status" className="text-xs text-amber-700 dark:text-amber-300">
+              {checkNotice
+                ? 'Решение не проверено и прохождение не засчитано. Прежний анализатор сопоставлял текст и мог сообщать неверные результаты. Проверь реальные случаи самостоятельно до появления поведенческих тестов.'
+                : 'Автоматический зачёт временно отключён: старый анализатор не запускал тесты и не измерял память. Ранее засчитанные задания нужно перепроверить.'}
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Удалённый запуск — отдельная экспериментальная функция: для Godot используются заглушки, а не настоящий движок. Сам по себе запуск не подтверждает прохождение задания.
+            </p>
 
             {vpsRunOutput && (
               <div className="p-3.5 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-emerald-400 whitespace-pre-wrap">

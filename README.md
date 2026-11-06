@@ -5,6 +5,8 @@
 [![Godot Engine](https://img.shields.io/badge/Godot-4.7_Stable_%7C_4.8_Beta_2-478CBF?style=flat-square&logo=godotengine)](https://godotengine.org/)
 [![VPS Sync](https://img.shields.io/badge/Oracle_Cloud_VPS-ARM64_Active-F80000?style=flat-square&logo=oracle)](https://github.com/vovawees/Learn-CSharp-Godot)
 
+**Текущее ограничение:** автоматический зачёт временно отключён: прежний анализатор не исполнял код и мог показывать вымышленные результаты. Прохождение прошлых заданий нужно перепроверить. Материалы с нуля: [начальный курс](curriculum/foundation/README.md). Реальные поведенческие тесты — [#6](https://github.com/vovawees/Learn-CSharp-Godot/issues/6).
+
 Инженерная образовательная платформа и кроссплатформенная среда разработки (ПК + Телефон) для глубокого освоения **C# 14 (.NET 10)** и архитектуры игр на **Godot 4.7 Stable / 4.8 Beta 2**.
 
 В отличие от поверхностных тренажёров с механическим копированием кода и заучиванием синтаксиса, платформа построена вокруг **инженерной цели (ТЗ)**, **работы с памятью CLR (Stack vs Heap)**, **семантической проверки контрактов** и **реальной компиляции .NET 10 на выделенном VPS**.

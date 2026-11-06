@@ -91,10 +91,10 @@ function readLocalFallbackState() {
   return {
     updatedAt: new Date().toISOString(),
     device: 'Web-Engineering-Client',
-    xp: 350,
-    streakDays: 3,
-    completedTasks: ['cs-val-ref-01'],
-    passedQuizzes: ['quiz-clr-stack'],
+    xp: 0,
+    streakDays: 0,
+    completedTasks: [],
+    passedQuizzes: [],
     codeSnapshots: {},
     syncHistory: [
       {
@@ -313,7 +313,7 @@ app.post('/api/mentor/review', async (req, res) => {
   if (!apiKey || apiKey === 'MY_GEMINI_API_KEY') {
     res.json({
       review:
-        'Сократовский разбор (Локальный анализатор AST): Твой код проверен по семантическим контрактам. Обрати внимание на то, как данные располагаются в стеке и куче: в C# 14 (.NET 10) и Godot 4.7/4.8 главная цель — сначала добиться 100% прохождения граничных тестов, а затем исключить лишние аллокации в игровом цикле.'
+        'Подсказка без автоматической проверки: обрати внимание на то, как данные располагаются в стеке и куче: в C# 14 (.NET 10) и Godot 4.7/4.8 главная цель — сначала добиться 100% прохождения граничных тестов, а затем исключить лишние аллокации в игровом цикле.'
     });
     return;
   }
