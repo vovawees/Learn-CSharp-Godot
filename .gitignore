@@ -8,3 +8,4 @@ coverage/
 !.env.example
 .playwright-cli/
 .local-sync-cache.json
+.aistudio/
