@@ -216,94 +216,9 @@ app.post('/api/sync/push', async (req, res) => {
   }
 });
 
-app.post('/api/vps/dotnet-run', async (req, res) => {
-  const { code, taskId } = req.body || {};
-  if (!code || typeof code !== 'string') {
-    res.status(400).json({ error: 'Не передан C# код для компиляции.' });
-    return;
-  }
-
-  // Build a self-contained C# 14 (.NET 10) test harness program
-  let harnessProgram = '';
-  if (taskId === 'cs-val-ref-01') {
-    harnessProgram = `
-using System;
-${code.replace(/using\s+System\s*;/g, '')}
-
-public static class VpsRunnerEntry {
-    public static void Main() {
-        var step1 = new CSharpEngineeringLab.Core.KineticImpulse(20f, 0.5f);
-        float r1 = step1.CalculateNext(0.1f);
-        var step2 = new CSharpEngineeringLab.Core.KineticImpulse(0.008f, 0.2f);
-        float r2 = step2.CalculateNext(0.016f);
-        bool isValType = typeof(CSharpEngineeringLab.Core.KineticImpulse).IsValueType;
-        Console.WriteLine($"[.NET {Environment.Version} ARM64 VPS] Test1={r1:F2}, Test2={r2:F2}, IsStruct={isValType}");
-    }
-}`;
-  } else if (taskId === 'cs-span-slice-02') {
-    harnessProgram = `
-using System;
-${code.replace(/using\s+System\s*;/g, '')}
-
-public static class VpsRunnerEntry {
-    public static void Main() {
-        ReadOnlySpan<int> data = [15, -4, 0, 80, 25];
-        int sum = CSharpEngineeringLab.Memory.TelemetryBufferProcessor.SumNormalizedHits(data, 50);
-        Console.WriteLine($"[.NET {Environment.Version} ARM64 VPS] SpanSum={sum} (Expected=90)");
-    }
-}`;
-  } else {
-    // Provide lightweight Godot 4.7/4.8 mock stubs so Godot scripts also compile cleanly on headless .NET 10!
-    harnessProgram = `
-using System;
-namespace Godot {
-    [AttributeUsage(AttributeTargets.All)] public class ExportAttribute : Attribute {}
-    [AttributeUsage(AttributeTargets.Delegate)] public class SignalAttribute : Attribute {}
-    public struct Vector2 { public float X; public float Y; public Vector2(float x, float y){X=x;Y=y;} }
-    public class Node {
-        public static class SignalName { public const string HealthChanged = "HealthChanged"; }
-        public void EmitSignal(string name, params object[] args) {
-            Console.WriteLine($"[Godot 4.8 Stub Signal] Emitted {name}({string.Join(", ", args)})");
-        }
-    }
-    public class CharacterBody2D : Node {
-        public Vector2 Velocity { get; set; }
-        public bool IsOnFloor() => false;
-        public bool MoveAndSlide() {
-            Console.WriteLine($"[Godot 4.8 Physics] MoveAndSlide() -> Velocity=({Velocity.X:F1}, {Velocity.Y:F2})");
-            return true;
-        }
-        public virtual void _PhysicsProcess(double delta) {}
-    }
-}
-${code.replace(/using\s+System\s*;/g, '').replace(/using\s+Godot\s*;/g, '')}
-
-public static class VpsRunnerEntry {
-    public static void Main() {
-        Console.WriteLine($"[.NET {Environment.Version} ARM64 VPS] Godot 4.7/4.8 C# Script Compiled & Verified Successfully.");
-    }
-}`;
-  }
-
-  try {
-    const b64 = Buffer.from(harnessProgram, 'utf8').toString('base64');
-    const output = await execOnVps(
-      `cd /home/opc/ai_workspace/csharp_mastery_hub/runner && echo "${b64}" | base64 -d > Program.cs && dotnet run --no-restore 2>&1`,
-      15000
-    );
-    res.json({
-      ok: true,
-      sdk: '.NET 10.0.114 (Oracle Linux 9.8 ARM64)',
-      output: output.trim()
-    });
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'VPS execution failed';
-    res.json({
-      ok: false,
-      sdk: '.NET 10.0.114 (Offline Fallback)',
-      output: `Не удалось выполнить удалённый запуск на VPS: ${message}`
-    });
-  }
+// Disabled until per-run isolation, limits and exit-status checks are implemented (#9).
+app.post('/api/vps/dotnet-run', (_req, res) => {
+  res.status(503).json({ ok: false, error: 'Удалённый запуск временно отключён до внедрения изоляции. Используй локальную практику в разделе «Основы C#».' });
 });
 
 app.post('/api/mentor/review', async (req, res) => {

@@ -43,8 +43,6 @@ export const EngineeringWorkspace: React.FC<EngineeringWorkspaceProps> = ({
   });
 
   const [checkNotice, setCheckNotice] = useState(false);
-  const [vpsRunOutput, setVpsRunOutput] = useState<string | null>(null);
-  const [isRunningVps, setIsRunningVps] = useState<boolean>(false);
   const [mentorReview, setMentorReview] = useState<string | null>(null);
   const [isLoadingMentor, setIsLoadingMentor] = useState<boolean>(false);
   const [selectedDefenseOption, setSelectedDefenseOption] = useState<string | null>(null);
@@ -59,7 +57,6 @@ export const EngineeringWorkspace: React.FC<EngineeringWorkspaceProps> = ({
     setSelectedTaskId(taskId);
     setSlideIndex(0);
     setCheckNotice(false);
-    setVpsRunOutput(null);
     setMentorReview(null);
     setSelectedDefenseOption(null);
     setPasteNotice(null);
@@ -91,25 +88,6 @@ export const EngineeringWorkspace: React.FC<EngineeringWorkspaceProps> = ({
       : currentTask.referenceCleanSolution;
     setCodeByTask((prev) => ({ ...prev, [currentTask.id]: nextCode }));
     setCheckNotice(false);
-  };
-
-  const handleRunOnVpsDotnet10 = async () => {
-    setIsRunningVps(true);
-    setVpsRunOutput(null);
-    try {
-      const res = await fetch('/api/vps/dotnet-run', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ taskId: currentTask.id, code: activeCode })
-      });
-      const data = await res.json();
-      setVpsRunOutput(`${data.sdk}\n${data.output}`);
-      setMobilePane('contracts');
-    } catch {
-      setVpsRunOutput('Ошибка соединения с удалённым компилятором .NET 10 на VPS.');
-    } finally {
-      setIsRunningVps(false);
-    }
   };
 
   const handleRequestSocraticReview = async () => {
@@ -466,14 +444,9 @@ export const EngineeringWorkspace: React.FC<EngineeringWorkspaceProps> = ({
                 Проверить цель и контракты
               </button>
 
-              <button
-                type="button"
-                onClick={handleRunOnVpsDotnet10}
-                disabled={isRunningVps}
-                className="px-4 py-2.5 text-xs font-semibold text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-              >
-                {isRunningVps ? 'Компиляция .NET 10 на VPS...' : 'Компилировать на VPS (.NET 10)'}
-              </button>
+              <span className="px-3 py-2 text-xs text-slate-500 dark:text-slate-400">
+                Удалённый запуск временно отключён до внедрения изоляции.
+              </span>
 
               <button
                 type="button"
@@ -497,14 +470,8 @@ export const EngineeringWorkspace: React.FC<EngineeringWorkspaceProps> = ({
                 : 'Автоматический зачёт временно отключён: старый анализатор не запускал тесты и не измерял память. Ранее засчитанные задания нужно перепроверить.'}
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Удалённый запуск — отдельная экспериментальная функция: для Godot используются заглушки, а не настоящий движок. Сам по себе запуск не подтверждает прохождение задания.
+              Удалённый запуск отключён. Локальная практика доступна в разделе «Основы C#».
             </p>
-
-            {vpsRunOutput && (
-              <div className="p-3.5 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-emerald-400 whitespace-pre-wrap">
-                {vpsRunOutput}
-              </div>
-            )}
 
             {mentorReview && (
               <div className="p-3.5 rounded-lg bg-sky-500/10 border border-sky-500/30 text-xs text-slate-800 dark:text-slate-200 leading-relaxed">
