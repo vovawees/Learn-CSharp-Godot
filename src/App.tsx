@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { TopBar, ActiveTab } from './components/TopBar';
+import { FoundationCourse } from './components/FoundationCourse';
 import { EngineeringWorkspace } from './components/EngineeringWorkspace';
 import { ClrGodotSimulator } from './components/ClrGodotSimulator';
 import { EngineeringAssessments } from './components/EngineeringAssessments';
 import { GitVpsSyncHub, SyncStatusData } from './components/GitVpsSyncHub';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('workspace');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('foundation');
   const [syncData, setSyncData] = useState<SyncStatusData | null>(null);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
 
@@ -138,8 +139,17 @@ export default function App() {
       {/* Mobile Navigation Bar (compact, below 15% sticky cap) */}
       <nav
         aria-label="Мобильная навигация"
-        className="flex md:hidden items-center justify-around border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-2 text-xs font-medium"
+        className="flex lg:hidden items-center justify-start gap-1 overflow-x-auto border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2 py-2 text-xs font-medium"
       >
+        <button
+          type="button"
+          onClick={() => setActiveTab('foundation')}
+          className={`px-2.5 py-1 rounded whitespace-nowrap ${
+            activeTab === 'foundation' ? 'bg-sky-600 text-white font-semibold' : 'text-slate-600 dark:text-slate-400'
+          }`}
+        >
+          Основы C#
+        </button>
         <button
           type="button"
           onClick={() => setActiveTab('workspace')}
@@ -179,6 +189,7 @@ export default function App() {
       </nav>
 
       <main className="flex-1">
+        {activeTab === 'foundation' && <FoundationCourse />}
         {activeTab === 'workspace' && (
           <EngineeringWorkspace
             completedTasks={completedTasks}

@@ -1,3 +1,5 @@
+HISTORICAL UNVERIFIED STATE: Last recorded before 2026-11-06 follow-up; current VPS and service were not inspected or changed. Repository now disables /api/vps/dotnet-run, but no deployment/restart was performed. Do not assume live service behavior matches the current repository.
+
 VPS HOST: 130.61.29.17 (Private IP: 10.0.0.81, Hostname: vovawe-vps)
 OS: Oracle Linux 9.8 (aarch64 / ARM64), 4 OCPU, 24 GB RAM
 USER: opc

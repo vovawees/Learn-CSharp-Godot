@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type ActiveTab = 'workspace' | 'simulator' | 'assessments' | 'sync';
+export type ActiveTab = 'foundation' | 'workspace' | 'simulator' | 'assessments' | 'sync';
 
 interface TopBarProps {
   activeTab: ActiveTab;
@@ -16,6 +16,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   isSyncing
 }) => {
   const navItems: { id: ActiveTab; label: string }[] = [
+    { id: 'foundation', label: 'Основы C#' },
     { id: 'workspace', label: 'Лаборатория и ТЗ' },
     { id: 'simulator', label: 'Симулятор CLR и Godot' },
     { id: 'assessments', label: 'PR-Ревью и Тесты' },
@@ -26,18 +27,18 @@ export const TopBar: React.FC<TopBarProps> = ({
     <header className="flex items-center justify-between gap-3 sm:gap-8 px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-200 dark:border-slate-800/80 bg-white/95 dark:bg-[#0B1120]/95 sticky top-0 z-30">
       {/* Zone 1: Single text element wordmark */}
       <a
-        href="#workspace"
+        href="#foundation"
         onClick={(e) => {
           e.preventDefault();
-          onSelectTab('workspace');
+          onSelectTab('foundation');
         }}
         className="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100 whitespace-nowrap shrink-0 font-display"
       >
-        C# 14 &amp; Godot 4.8 Lab
+        C# &amp; Godot Lab
       </a>
 
       {/* Zone 2: 4 concise single-line text navigation links */}
-      <nav aria-label="Основная навигация" className="hidden md:flex items-center gap-6 text-sm font-medium">
+      <nav aria-label="Основная навигация" className="hidden lg:flex items-center gap-4 text-sm font-medium">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
           return (

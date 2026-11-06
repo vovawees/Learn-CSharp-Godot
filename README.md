@@ -1,133 +1,105 @@
-# C# 14 (.NET 10) & Godot 4.7 / 4.8 Engineering Lab
+# C# & Godot Engineering Lab
 
-[![.NET 10.0](https://img.shields.io/badge/.NET-10.0.114_LTS-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com/)
-[![C# 14](https://img.shields.io/badge/C%23-14.0-239120?style=flat-square&logo=csharp)](https://learn.microsoft.com/en-us/dotnet/csharp/)
-[![Godot Engine](https://img.shields.io/badge/Godot-4.7_Stable_%7C_4.8_Beta_2-478CBF?style=flat-square&logo=godotengine)](https://godotengine.org/)
-[![VPS Sync](https://img.shields.io/badge/Oracle_Cloud_VPS-ARM64_Active-F80000?style=flat-square&logo=oracle)](https://github.com/vovawees/Learn-CSharp-Godot)
+[![.NET](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet)](https://dotnet.microsoft.com/download/dotnet/10.0)
+[![Godot](https://img.shields.io/badge/Godot-4.7%20.NET-478CBF?logo=godotengine)](https://godotengine.org/)
+[![Статус](https://img.shields.io/badge/статус-в%20разработке-orange)](https://github.com/vovawees/Learn-CSharp-Godot/issues)
 
-**Текущее ограничение:** автоматический зачёт временно отключён: прежний анализатор не исполнял код и мог показывать вымышленные результаты. Прохождение прошлых заданий нужно перепроверить. Материалы с нуля: [начальный курс](curriculum/foundation/README.md). Реальные поведенческие тесты — [#6](https://github.com/vovawees/Learn-CSharp-Godot/issues/6).
+Открытая лаборатория для глубокого освоения C#: сначала основы и самостоятельное решение задач, затем архитектура и игровая разработка в Godot 4.7 .NET. Проект находится в разработке; возможности ниже разделены на готовые и планируемые.
 
-Инженерная образовательная платформа и кроссплатформенная среда разработки (ПК + Телефон) для глубокого освоения **C# 14 (.NET 10)** и архитектуры игр на **Godot 4.7 Stable / 4.8 Beta 2**.
+## Содержание
 
-В отличие от поверхностных тренажёров с механическим копированием кода и заучиванием синтаксиса, платформа построена вокруг **инженерной цели (ТЗ)**, **работы с памятью CLR (Stack vs Heap)**, **семантической проверки контрактов** и **реальной компиляции .NET 10 на выделенном VPS**.
+- [Как здесь учиться](#как-здесь-учиться)
+- [Что работает и что ещё предстоит](#что-работает-и-что-ещё-предстоит)
+- [Быстрый старт](#быстрый-старт)
+- [Первая практика с реальными тестами](#первая-практика-с-реальными-тестами)
+- [Архитектура](#архитектура)
+- [Структура проекта](#структура-проекта)
+- [Материалы и план](#материалы-и-план)
 
----
+## Как здесь учиться
 
-## Оглавление
+**Объяснение → прогноз → своя реализация → проверка → объяснение → изменение требований.** Правильное поведение важнее совпадения кода с примером. Оптимизацию имеет смысл рассматривать после достижения цели и подтверждать измерениями. Тесты показывают ошибки на проверенных входах, но не доказывают понимания.
 
-- [Ключевая философия обучения](#ключевая-философия-обучения)
-- [Архитектура системы (Mermaid)](#архитектура-системы-mermaid)
-- [Учебная программа и модули](#учебная-программа-и-модули)
-- [Дерево директорий](#дерево-директорий)
-- [Быстрый старт и запуск](#быстрый-старт-и-запуск)
+## Что работает и что ещё предстоит
 
----
+| Возможность | Состояние |
+| --- | --- |
+| Основы C#: 3 первых занятия, объяснения, ТЗ и ссылки на видео | В веб-интерфейсе и [учебных материалах](curriculum/foundation/README.md) |
+| Заметки к занятиям | Сохраняются в localStorage текущего браузера; синхронизации между устройствами нет |
+| Практика «здоровье после урона» | Отдельная локальная программа .NET 10 с реальными проверками поведения |
+| Продвинутые материалы CLR/Godot и PR-вопросы | Черновой интерфейс; пояснения, предположения и численные показатели требуют проверки |
+| Автоматический зачёт задач в интерфейсе | Отключён: старый анализатор сопоставлял текст и мог выдавать вымышленные результаты; [#6](https://github.com/vovawees/Learn-CSharp-Godot/issues/6) |
+| Удалённый запуск C# на VPS | Отключён до изоляции и ограничения ресурсов; [#9](https://github.com/vovawees/Learn-CSharp-Godot/issues/9) |
+| Синхронизация заметок и надёжного прогресса | Не готова; [#10](https://github.com/vovawees/Learn-CSharp-Godot/issues/10) |
 
-## Ключевая философия обучения
+Старые результаты заданий нельзя считать подтверждённым прохождением. VPS и существующий сервис в ходе последней доработки не проверялись и не перезапускались; состояние в `.ai/vps_deployment.txt` — историческое. Изменения репозитория не означают автоматического деплоя.
 
-1. **Сначала — Выполнение Цели (Goal-First), Затем — Оптимизация (Zero-GC)**:
-   - Любая твоя реализация C# (через `for`, `foreach`, тернарный оператор, `switch`, `Math.Clamp`, `record struct` или собственные вспомогательные методы) принимается, если она выполняет **функциональный контракт ТЗ**.
-   - Вторым этапом анализатор проверяет **инженерную оптимизацию**: отсутствие лишних аллокаций в управляемой куче Gen 0, сложность алгоритма $O(1)/O(N)$ и корректную работу с деревом сцены Godot.
-2. **Защита от бездумного копипаста и Сократовская защита кода**:
-   - Каждый модуль начинается с интерактивного пошагового видео-разбора памяти CLR и узлов Godot, после чего открывается ТЗ и проверочный вопрос «Почему это работает именно так под капотом?».
-3. **Удобная работа с телефона и ПК + Синхронизация через VPS**:
-   - Мобильная панель быстрых токенов C# 14 (`readonly struct`, `ReadOnlySpan<int>`, `partial`, `MoveAndSlide()`, `EmitSignal`), мгновенная синхронизация состояния через сервис `csharp_mastery_hub_api` на Oracle Linux 9.8 ARM64 и удалённая компиляция в настоящем `.NET SDK 10.0.114`.
+## Быстрый старт
 
----
+Нужны Node.js 24, npm и .NET SDK 10. Для редактирования Godot-проектов позже потребуется [Godot 4.7 .NET](https://docs.godotengine.org/en/4.7/tutorials/scripting/c_sharp/index.html).
 
-## Архитектура системы (Mermaid)
-
-```mermaid
-graph TD
-    subgraph Client["Web & Mobile Engineering IDE (React 19 + Tailwind v4)"]
-        UI_Work["Лаборатория: Видео-Разбор + ТЗ + C# 14 Редактор"]
-        UI_Sim["Интерактивный Симулятор CLR Stack/Heap & Godot 4.8"]
-        UI_PR["Командные PR Code Reviews & Архитектурные Тесты"]
-        UI_Sync["Центр синхронизации Git & VPS"]
-    end
-
-    subgraph Engine["Goal-Driven Semantic Evaluator (src/engine)"]
-        AST["Контрактный верификатор (Этап 1: Цель, Этап 2: Zero-GC)"]
-        AntiCopy["Защита от слепого копипаста и анти-паттернов"]
-    end
-
-    subgraph Backend["Full-Stack Express Server (server.ts :3000)"]
-        API_Sync["/api/sync/status & /api/sync/push"]
-        API_Run["/api/vps/dotnet-run (SSH2 Bridge)"]
-        API_Mentor["/api/mentor/review (Socratic AI Reviewer)"]
-    end
-
-    subgraph Cloud["Внешняя Инфраструктура"]
-        VPS["Oracle Cloud ARM64 VPS (:8945 csharp_mastery_hub_api + .NET 10.0.114)"]
-        GH["GitHub API (vovawees/Learn-CSharp-Godot Issues & Milestones)"]
-    end
-
-    UI_Work --> AST
-    AST --> AntiCopy
-    UI_Work --> API_Run
-    UI_Work --> API_Mentor
-    UI_Sync --> API_Sync
-    API_Run --> VPS
-    API_Sync --> VPS
-    API_Sync --> GH
+```bash
+git clone https://github.com/vovawees/Learn-CSharp-Godot.git
+cd Learn-CSharp-Godot
+npm ci
+npm run dev
 ```
 
----
+Открой адрес, который выведет сервер (по умолчанию `http://localhost:3000`). Начальный раздел — «Основы C#». Приложение не требует VPS для чтения уроков. Существующие мосты синхронизации и AI требуют отдельной настройки; см. `.env.example`, но не считай их работоспособность проверенной без фактического теста.
 
-## Учебная программа и модули
+```bash
+npm run lint       # TypeScript
+npm run build      # клиентский production-бандл
+npm test           # тесты TypeScript; не проверяют корректность C# решений
+```
 
-| Модуль | Тема и стек | Инженерная цель (ТЗ) | Фокус оптимизации |
-| :--- | :--- | :--- | :--- |
-| **01** | **C# 14 / .NET 10: Stack, Heap & Value Types** | Расчёт затухания физического импульса с отсечением микро-дрейфа `<= 0.01f` | `readonly struct`, `0 B` в Gen 0 Heap, отсутствие упаковки (boxing) |
-| **02** | **C# 14: `ReadOnlySpan<T>` & `params ReadOnlySpan<T>`** | Однопроходная фильтрация и ограничение пиков буфера урона | Сложность $O(N)$, отказ от `.ToArray()` / `.ToList()` в горячем цикле |
-| **03** | **Godot 4.7 Stable: `_PhysicsProcess` & `MoveAndSlide`** | Детерминированный контроллер `CharacterBody2D` с учётом `(float)delta` | `partial class` для Source Generator, запрет `GetNode` внутри физического тика |
-| **04** | **Godot 4.8 Beta 2: `[Signal]` EventHandler & Decoupling** | Изолированный `HealthComponent` со строгими инвариантами `[0, MaxHp]` | Слабая связность (Observer), защита от спама сигналов после смерти |
+Заметки остаются в браузере: очистка данных браузера их удалит. Для переноса между устройствами вручную сохрани записи в файл или Git до появления синхронизации.
 
----
+## Первая практика с реальными тестами
 
-## Дерево директорий
+1. Прочитай [урок и ТЗ](curriculum/foundation/health-lab/README.md).
+2. Реализуй свой метод в `curriculum/foundation/health-lab/Health.cs`.
+3. Из корня репозитория выполни:
+
+```bash
+dotnet run --project curriculum/foundation/health-lab/HealthLab.csproj
+```
+
+Проверяется 10 201 допустимая пара входных значений и 10 недопустимых случаев. Стартовый шаблон намеренно не проходит. При ошибке тесты покажут ожидаемое и фактическое поведение; ошибки компиляции показываются компилятором. Тесты выполняют твой код локально, не в изолированной песочнице. Они не передают результаты в веб-приложение и не измеряют знание или производительность.
+
+## Архитектура
+
+```mermaid
+flowchart LR
+  Person[Ученик на ПК или телефоне] --> UI[Веб-интерфейс React]
+  UI --> Notes[Заметки: localStorage этого браузера]
+  UI --> Lessons[Начальные уроки и ТЗ]
+  Lessons --> Practice[Локальный проект практики .NET 10]
+  Practice --> Tests[Поведенческие тесты]
+  UI -. существующий непроверенный мост .-> Sync[Сервис синхронизации VPS]
+  UI -. отключён .-> Runner[Будущий изолированный runner]
+```
+
+Симулятор и старый анализатор — демонстрационные компоненты, не профилировщик CLR, не Godot и не поведенческие тесты. В частности, `struct` не гарантирует, что значение всегда находится в стеке или что вся программа не выделяет память.
+
+## Структура проекта
 
 ```text
 .
-├── .ai/                              # Техническая база знаний для ИИ-сессий
-│   ├── architecture.txt              # Архитектура модулей и контрактов
-│   ├── roadmap_status.txt            # Статус разработки и план следующих шагов
-│   └── vps_deployment.txt            # Карта деплоя и портов на Oracle Cloud VPS
-├── src/
-│   ├── assets/images/                # Сгенерированные инженерные схемы CLR и Godot
-│   ├── components/
-│   │   ├── TopBar.tsx                # Навигационная панель (3-зонный контракт)
-│   │   ├── EngineeringWorkspace.tsx  # Видео-разбор, ТЗ, C# 14 редактор и проверка контрактов
-│   │   ├── ClrGodotSimulator.tsx     # Интерактивный симулятор памяти .NET 10 и кадра Godot 4.8
-│   │   ├── EngineeringAssessments.tsx# Практические PR Code Reviews
-│   │   └── GitVpsSyncHub.tsx         # Синхронизация с VPS (.NET 10) и GitHub Issues
-│   ├── data/
-│   │   └── curriculum.ts             # Учебные модули, слайды, ТЗ и PR-задачи
-│   ├── engine/
-│   │   ├── csharpEvaluator.ts        # Семантический верификатор целей и аллокаций
-│   │   └── csharpEvaluator.test.ts   # Модульные тесты (node:test)
-│   ├── App.tsx                       # Корневой компонент и синхронизация состояния
-│   ├── index.css                     # Конфигурация Tailwind CSS v4 и шрифтов
-│   └── main.tsx                      # Точка входа React 19
-├── server.ts                         # Express + Vite сервер, SSH-мост к VPS и GitHub API
-├── package.json                      # Зависимости и скрипты запуска
-└── tsconfig.json                     # Конфигурация TypeScript
+├── .ai/                            # Техническая память и статус
+├── curriculum/foundation/          # Начальные занятия и ссылки на материалы
+│   └── health-lab/                 # Самостоятельная практика .NET 10
+├── src/components/                 # React-интерфейс
+├── src/data/                       # Существующие продвинутые материалы
+├── src/engine/                     # Демонстрационный анализатор и тесты UI-ограничений
+├── server.ts                       # Express/Vite; runner отключён
+├── package.json / package-lock.json
+└── .env.example                    # Шаблон настроек
 ```
 
----
+## Материалы и план
 
-## Быстрый старт и запуск
-
-```bash
-# 1. Установка зависимостей
-npm install
-
-# 2. Запуск модульных тестов верификатора контрактов
-npx --yes tsx --test src/engine/csharpEvaluator.test.ts
-
-# 3. Запуск full-stack сервера разработки (порт 3000)
-npm run dev
-
-# 4. Сборка production-бандла
-npm run build
-```
+- [Microsoft: C# for Beginners](https://learn.microsoft.com/en-us/shows/csharp-for-beginners/) — видео на английском.
+- [Официальное руководство по C#](https://learn.microsoft.com/dotnet/csharp/) и [документация Godot C#](https://docs.godotengine.org/en/4.7/tutorials/scripting/c_sharp/index.html).
+- [Учебный маршрут](curriculum/foundation/README.md) — от основ до игровых проектов; будущие этапы отмечены как план.
+- [Issues](https://github.com/vovawees/Learn-CSharp-Godot/issues) и milestones — незавершённая работа и приоритеты.

@@ -1,14 +1,9 @@
-CURRENT STATUS (2026-11-06):
-- GitHub Repository created and initialized: https://github.com/vovawees/Learn-CSharp-Godot
-- GitHub Milestones configured:
-  * M1: Core C# 14 (.NET 10) & CLR Memory Engine
-  * M2: Architecture, LINQ, Async & Godot 4.7 Stable / 4.8 Beta 2 C#
-  * M3: Cross-Device Mobile/PC IDE & VPS Cloud Sync
-- GitHub Issues (#1 to #5) created and labeled.
-- VPS microservice csharp_mastery_hub_api.service deployed on port 8945 with .NET SDK 10.0.114.
-- Unit tests in src/engine/csharpEvaluator.test.ts passing.
-
-NEXT STEPS FOR FUTURE SESSIONS:
-1. Add Module 05 covering Godot 4.8 Beta 2 Jolt Physics 3D RayCast3D & GDExtension C# 14 interop.
-2. Add Module 06 covering C# 14 async/ValueTask asset streaming and ArrayPool<T> object pooling for bullet-hell systems.
-3. Expand multiplayer state synchronization examples in the VPS runner.
+CURRENT STATUS 2026-11-06:
+- #8 complete: first local .NET 10 exercise with actual behavior tests; evaluated against 2 valid and 4 invalid implementations including compile failure; starter fails as intended.
+- #7 open: foundational 3-lesson tab and standalone materials available; curriculum remains incomplete.
+- #6 open: old regex evaluator is not behavior verification. UI auto-credit disabled; old progress requires revalidation.
+- #9 open: remote code execution route disabled pending proper isolation, resource limits, correct exit statuses, per-run workspace, authentication and tests.
+- #10 open: local browser notes do not sync. Existing sync implementation needs two-device validation, conflict handling and durable state.
+- npm ci/npm run build/npm run lint/npm test are intended checks. UI tested on 390x844 and 1440x900, including note reload and navigation.
+- No VPS changes or deployments this session. User local path unavailable in agent environment.
+NEXT: trustworthy authenticated cross-device sync; then isolated runner and tests; integrate safe behavioral grading; expand basics and Godot 4.7 stable curriculum. Avoid assuming simulator numbers are actual measurements.
