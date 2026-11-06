@@ -9,3 +9,6 @@ coverage/
 .playwright-cli/
 .local-sync-cache.json
 .aistudio/
+# .NET build artifacts
+**/bin/
+**/obj/
